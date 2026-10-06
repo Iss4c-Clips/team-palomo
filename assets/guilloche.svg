@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 630" width="1000" height="630">
+  <defs>
+    <!-- Multi-tone Guilloche security gradients -->
+    <linearGradient id="bgSec" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EFF6FF" />
+      <stop offset="35%" stop-color="#FEF2F2" />
+      <stop offset="70%" stop-color="#EFF6FF" />
+      <stop offset="100%" stop-color="#FFFBEB" />
+    </linearGradient>
+
+    <!-- Guilloche Pattern Unit -->
+    <pattern id="guillochePattern" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M 0 60 Q 30 10 60 60 T 120 60" fill="none" stroke="#2563EB" stroke-width="0.7" opacity="0.16" />
+      <path d="M 0 60 Q 30 110 60 60 T 120 60" fill="none" stroke="#DC2626" stroke-width="0.7" opacity="0.16" />
+      <path d="M 60 0 Q 10 30 60 60 T 60 120" fill="none" stroke="#059669" stroke-width="0.6" opacity="0.12" />
+      <path d="M 60 0 Q 110 30 60 60 T 60 120" fill="none" stroke="#D97706" stroke-width="0.6" opacity="0.12" />
+      <circle cx="60" cy="60" r="38" fill="none" stroke="#3B82F6" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.18" />
+      <circle cx="60" cy="60" r="24" fill="none" stroke="#EF4444" stroke-width="0.5" opacity="0.15" />
+    </pattern>
+
+    <pattern id="microtextPattern" width="300" height="20" patternUnits="userSpaceOnUse">
+      <text x="0" y="14" font-family="'Courier New', monospace" font-size="6.5" font-weight="bold" fill="#1E3A8A" opacity="0.18" letter-spacing="1">
+        REPÚBLICA DOMINICANA • JUNTA CENTRAL PALOMIL • TEAM PALOMO •
+      </text>
+    </pattern>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1000" height="630" fill="url(#bgSec)" />
+
+  <!-- Repeated Guilloche lines -->
+  <rect width="1000" height="630" fill="url(#guillochePattern)" />
+
+  <!-- Concentric Security Rosettes -->
+  <g transform="translate(680, 315)" opacity="0.22">
+    <ellipse cx="0" cy="0" rx="260" ry="180" fill="none" stroke="#1D4ED8" stroke-width="0.9" />
+    <ellipse cx="0" cy="0" rx="240" ry="160" fill="none" stroke="#B91C1C" stroke-width="0.8" transform="rotate(15)" />
+    <ellipse cx="0" cy="0" rx="220" ry="140" fill="none" stroke="#1D4ED8" stroke-width="0.8" transform="rotate(30)" />
+    <ellipse cx="0" cy="0" rx="200" ry="120" fill="none" stroke="#D97706" stroke-width="0.8" transform="rotate(45)" />
+    <ellipse cx="0" cy="0" rx="180" ry="100" fill="none" stroke="#1D4ED8" stroke-width="0.8" transform="rotate(60)" />
+    <ellipse cx="0" cy="0" rx="160" ry="85" fill="none" stroke="#B91C1C" stroke-width="0.8" transform="rotate(75)" />
+    <ellipse cx="0" cy="0" rx="140" ry="70" fill="none" stroke="#047857" stroke-width="0.7" transform="rotate(90)" />
+    <ellipse cx="0" cy="0" rx="120" ry="55" fill="none" stroke="#1D4ED8" stroke-width="0.7" transform="rotate(105)" />
+    <ellipse cx="0" cy="0" rx="100" ry="40" fill="none" stroke="#B91C1C" stroke-width="0.7" transform="rotate(120)" />
+    <ellipse cx="0" cy="0" rx="80" ry="25" fill="none" stroke="#D97706" stroke-width="0.6" transform="rotate(135)" />
+  </g>
+
+  <!-- Left Photo Rosette Area -->
+  <g transform="translate(180, 320)" opacity="0.18">
+    <circle cx="0" cy="0" r="160" fill="none" stroke="#1D4ED8" stroke-width="0.8" />
+    <circle cx="0" cy="0" r="140" fill="none" stroke="#DC2626" stroke-width="0.8" stroke-dasharray="4,2" />
+    <circle cx="0" cy="0" r="120" fill="none" stroke="#1D4ED8" stroke-width="0.7" />
+    <circle cx="0" cy="0" r="100" fill="none" stroke="#059669" stroke-width="0.7" />
+  </g>
+
+  <!-- Microtext Bands Across Background -->
+  <rect y="110" width="1000" height="20" fill="url(#microtextPattern)" />
+  <rect y="170" width="1000" height="20" fill="url(#microtextPattern)" opacity="0.7" />
+  <rect y="310" width="1000" height="20" fill="url(#microtextPattern)" opacity="0.6" />
+  <rect y="460" width="1000" height="20" fill="url(#microtextPattern)" opacity="0.7" />
+  <rect y="520" width="1000" height="20" fill="url(#microtextPattern)" />
+
+  <!-- Central Watermark Map of Dominican Republic / Quisqueya outline watermark -->
+  <g transform="translate(520, 290) scale(1.1)" opacity="0.08" fill="#002D62">
+    <!-- Simplified artistic silhouette of Dominican Republic -->
+    <path d="M -160,20 Q -110,-40 -50,-30 Q 30,-50 120,-20 Q 180,-10 210,15 Q 160,70 90,65 Q 40,80 -20,60 Q -90,75 -150,50 Z" />
+  </g>
+</svg>

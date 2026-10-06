@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Gradients for realistic metallic and ribbon finishes -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFDF00" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#996515" />
+    </linearGradient>
+    <linearGradient id="blueRibbon" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1A4E94" />
+      <stop offset="50%" stop-color="#002D62" />
+      <stop offset="100%" stop-color="#001C3D" />
+    </linearGradient>
+    <linearGradient id="redRibbon" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E62238" />
+      <stop offset="50%" stop-color="#CE1126" />
+      <stop offset="100%" stop-color="#8B0000" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Laurel Branch (Left) -->
+    <path d="M 210 390 C 150 370 100 290 115 190 C 120 160 145 130 170 105" fill="none" stroke="#237A38" stroke-width="5" stroke-linecap="round" />
+    <!-- Laurel Leaves -->
+    <g fill="#2D8844" stroke="#195428" stroke-width="1.5">
+      <ellipse cx="112" cy="200" rx="14" ry="7" transform="rotate(-30 112 200)" />
+      <ellipse cx="120" cy="235" rx="15" ry="8" transform="rotate(-20 120 235)" />
+      <ellipse cx="132" cy="275" rx="16" ry="8" transform="rotate(-10 132 275)" />
+      <ellipse cx="148" cy="315" rx="16" ry="8" transform="rotate(10 148 315)" />
+      <ellipse cx="170" cy="350" rx="16" ry="8" transform="rotate(25 170 350)" />
+      <ellipse cx="118" cy="165" rx="14" ry="7" transform="rotate(-45 118 165)" />
+      <ellipse cx="135" cy="135" rx="13" ry="7" transform="rotate(-60 135 135)" />
+      <ellipse cx="160" cy="115" rx="12" ry="6" transform="rotate(-75 160 115)" />
+      <!-- Inner leaves -->
+      <ellipse cx="135" cy="195" rx="13" ry="6" transform="rotate(40 135 195)" />
+      <ellipse cx="145" cy="230" rx="13" ry="7" transform="rotate(30 145 230)" />
+      <ellipse cx="160" cy="270" rx="14" ry="7" transform="rotate(20 160 270)" />
+    </g>
+    <!-- Laurel Berries (Red) -->
+    <circle cx="128" cy="175" r="3.5" fill="#C00" />
+    <circle cx="122" cy="215" r="3.5" fill="#C00" />
+    <circle cx="138" cy="250" r="3.5" fill="#C00" />
+    <circle cx="152" cy="290" r="3.5" fill="#C00" />
+
+    <!-- Palm Frond (Right) -->
+    <path d="M 290 390 C 350 370 400 290 385 190 C 380 160 355 130 330 105" fill="none" stroke="#237A38" stroke-width="5" stroke-linecap="round" />
+    <g fill="#248738" stroke="#195428" stroke-width="1.2">
+      <!-- Palm Leaves fronds -->
+      <path d="M 385 190 Q 425 180 435 165 Q 405 185 385 195 Z" />
+      <path d="M 380 220 Q 425 215 438 200 Q 405 215 380 226 Z" />
+      <path d="M 370 255 Q 418 255 432 240 Q 395 252 370 260 Z" />
+      <path d="M 355 290 Q 405 295 418 285 Q 380 290 355 295 Z" />
+      <path d="M 335 325 Q 385 335 398 325 Q 360 325 335 329 Z" />
+      <path d="M 305 358 Q 355 372 368 365 Q 330 360 305 362 Z" />
+      <!-- Upper fronds -->
+      <path d="M 380 160 Q 415 145 422 130 Q 395 150 380 165 Z" />
+      <path d="M 365 135 Q 395 115 400 100 Q 380 125 365 140 Z" />
+      <path d="M 345 115 Q 370 92 370 78 Q 355 105 345 119 Z" />
+      <!-- Inner fronds -->
+      <path d="M 370 195 Q 340 185 330 175 Q 350 195 370 200 Z" />
+      <path d="M 360 230 Q 330 220 320 210 Q 340 230 360 235 Z" />
+      <path d="M 345 265 Q 320 255 310 245 Q 330 265 345 270 Z" />
+    </g>
+
+    <!-- Spears & Trophies with Dominican Flags behind shield -->
+    <g stroke="#996515" stroke-width="3">
+      <!-- Left Spears -->
+      <line x1="210" y1="280" x2="150" y2="140" stroke="#7A5210" stroke-width="4" stroke-linecap="round" />
+      <polygon points="150,140 144,125 156,125" fill="url(#goldGrad)" />
+      <line x1="220" y1="290" x2="165" y2="130" stroke="#7A5210" stroke-width="4" stroke-linecap="round" />
+      <polygon points="165,130 159,115 171,115" fill="url(#goldGrad)" />
+      <line x1="230" y1="300" x2="185" y2="120" stroke="#7A5210" stroke-width="4" stroke-linecap="round" />
+      <polygon points="185,120 179,105 191,105" fill="url(#goldGrad)" />
+
+      <!-- Right Spears -->
+      <line x1="290" y1="280" x2="350" y2="140" stroke="#7A5210" stroke-width="4" stroke-linecap="round" />
+      <polygon points="350,140 344,125 356,125" fill="url(#goldGrad)" />
+      <line x1="280" y1="290" x2="335" y2="130" stroke="#7A5210" stroke-width="4" stroke-linecap="round" />
+      <polygon points="335,130 329,115 341,115" fill="url(#goldGrad)" />
+      <line x1="270" y1="300" x2="315" y2="120" stroke="#7A5210" stroke-width="4" stroke-linecap="round" />
+      <polygon points="315,120 309,105 321,105" fill="url(#goldGrad)" />
+    </g>
+
+    <!-- Central Shield (Escudo) -->
+    <!-- Shield Outer Gold Rim -->
+    <path d="M 180 160 L 320 160 C 320 160 325 240 320 280 C 310 330 250 370 250 370 C 250 370 190 330 180 280 C 175 240 180 160 180 160 Z" 
+          fill="url(#goldGrad)" stroke="#66460C" stroke-width="3" />
+    
+    <!-- Shield Inner Body -->
+    <g transform="translate(5, 5) scale(0.96)">
+      <!-- Quartered quarters: Top-Left Blue, Top-Right Red, Bottom-Left Red, Bottom-Right Blue -->
+      <clipPath id="shieldClip">
+        <path d="M 182 162 L 318 162 C 318 162 323 240 318 280 C 308 330 250 368 250 368 C 250 368 192 330 182 280 C 177 240 182 162 182 162 Z" />
+      </clipPath>
+      <g clip-path="url(#shieldClip)">
+        <rect x="170" y="150" width="80" height="95" fill="#002D62" />
+        <rect x="250" y="150" width="80" height="95" fill="#CE1126" />
+        <rect x="170" y="245" width="80" height="130" fill="#CE1126" />
+        <rect x="250" y="245" width="80" height="130" fill="#002D62" />
+        <!-- White Cross inside Shield -->
+        <rect x="238" y="150" width="24" height="225" fill="#FFFFFF" />
+        <rect x="170" y="233" width="160" height="24" fill="#FFFFFF" />
+      </g>
+    </g>
+
+    <!-- Center Bible & Cross -->
+    <g transform="translate(250, 245)">
+      <!-- Radiating Golden Halo -->
+      <circle cx="0" cy="-5" r="32" fill="url(#goldGrad)" opacity="0.4" />
+      <!-- Bible Open Pages -->
+      <path d="M -22 8 C -12 2 -3 7 0 10 C 3 7 12 2 22 8 L 20 -14 C 11 -18 3 -13 0 -10 C -3 -13 -11 -18 -20 -14 Z" 
+            fill="#FFFDE8" stroke="#4A3B18" stroke-width="1.5" />
+      <!-- Bible Spine & Bookmark ribbon -->
+      <line x1="0" y1="-10" x2="0" y2="10" stroke="#7A5210" stroke-width="1.5" />
+      <path d="M 0 10 Q 5 18 2 24" fill="none" stroke="#CE1126" stroke-width="2" stroke-linecap="round" />
+      <!-- Scripture text lines simulation -->
+      <line x1="-16" y1="-7" x2="-4" y2="-5" stroke="#555" stroke-width="1" />
+      <line x1="-16" y1="-1" x2="-4" y2="1" stroke="#555" stroke-width="1" />
+      <line x1="-16" y1="5" x2="-4" y2="7" stroke="#555" stroke-width="1" />
+      <line x1="4" y1="-5" x2="16" y2="-7" stroke="#555" stroke-width="1" />
+      <line x1="4" y1="1" x2="16" y2="-1" stroke="#555" stroke-width="1" />
+      <line x1="4" y1="7" x2="16" y2="5" stroke="#555" stroke-width="1" />
+      <!-- Golden Cross above Bible -->
+      <rect x="-2.5" y="-36" width="5" height="28" fill="url(#goldGrad)" stroke="#5A400C" stroke-width="0.8" rx="1" />
+      <rect x="-10" y="-30" width="20" height="5" fill="url(#goldGrad)" stroke="#5A400C" stroke-width="0.8" rx="1" />
+    </g>
+
+    <!-- Top Ribbon (Ultramarine Blue with "DIOS PATRIA LIBERTAD") -->
+    <g>
+      <!-- Ribbon tail Left -->
+      <path d="M 120 78 L 160 62 L 155 88 Z" fill="#001C3D" />
+      <path d="M 115 82 L 155 64 L 165 92 L 125 110 Z" fill="url(#blueRibbon)" stroke="#001C3D" stroke-width="1.5" />
+      <polygon points="115,82 125,96 112,110 125,110" fill="#001228" />
+
+      <!-- Ribbon tail Right -->
+      <path d="M 380 78 L 340 62 L 345 88 Z" fill="#001C3D" />
+      <path d="M 385 82 L 345 64 L 335 92 L 375 110 Z" fill="url(#blueRibbon)" stroke="#001C3D" stroke-width="1.5" />
+      <polygon points="385,82 375,96 388,110 375,110" fill="#001228" />
+
+      <!-- Ribbon Arch Center -->
+      <path id="topRibbonPath" d="M 140 85 C 190 55 310 55 360 85" fill="none" stroke="none" />
+      <path d="M 145 80 C 195 50 305 50 355 80 L 350 102 C 300 72 200 72 150 102 Z" 
+            fill="url(#blueRibbon)" stroke="#001C3D" stroke-width="2" />
+      
+      <!-- Golden edge for ribbon -->
+      <path d="M 145 80 C 195 50 305 50 355 80" fill="none" stroke="url(#goldGrad)" stroke-width="2" />
+      <path d="M 150 102 C 200 72 300 72 350 102" fill="none" stroke="url(#goldGrad)" stroke-width="2" />
+      
+      <!-- Text: DIOS PATRIA LIBERTAD -->
+      <text font-family="'Cinzel', 'Times New Roman', serif" font-weight="900" font-size="13" fill="#FFFFFF" letter-spacing="3.5">
+        <textPath href="#topRibbonPath" startOffset="50%" text-anchor="middle">DIOS PATRIA LIBERTAD</textPath>
+      </text>
+    </g>
+
+    <!-- Bottom Ribbon (Vermilion Red with "REPÚBLICA DOMINICANA") -->
+    <g>
+      <!-- Left folded end -->
+      <path d="M 115 410 L 155 390 L 160 415 Z" fill="#600" />
+      <polygon points="105,420 150,395 155,425 115,445" fill="url(#redRibbon)" stroke="#600" stroke-width="1.5" />
+      <!-- Right folded end -->
+      <path d="M 385 410 L 345 390 L 340 415 Z" fill="#600" />
+      <polygon points="395,420 350,395 345,425 385,445" fill="url(#redRibbon)" stroke="#600" stroke-width="1.5" />
+
+      <!-- Center Arch Red Ribbon -->
+      <path id="bottomRibbonPath" d="M 135 408 C 195 440 305 440 365 408" fill="none" stroke="none" />
+      <path d="M 140 398 C 200 430 300 430 360 398 L 365 422 C 305 454 195 454 135 422 Z" 
+            fill="url(#redRibbon)" stroke="#600" stroke-width="2" />
+
+      <!-- Golden edge for ribbon -->
+      <path d="M 140 398 C 200 430 300 430 360 398" fill="none" stroke="url(#goldGrad)" stroke-width="2" />
+      <path d="M 135 422 C 195 454 305 454 365 422" fill="none" stroke="url(#goldGrad)" stroke-width="2" />
+
+      <!-- Text: REPÚBLICA DOMINICANA -->
+      <text font-family="'Cinzel', 'Times New Roman', serif" font-weight="900" font-size="13" fill="#FFFFFF" letter-spacing="3">
+        <textPath href="#bottomRibbonPath" startOffset="50%" text-anchor="middle">REPÚBLICA DOMINICANA</textPath>
+      </text>
+    </g>
+  </g>
+</svg>

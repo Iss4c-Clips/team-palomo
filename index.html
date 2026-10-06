@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Palomo RD • Carnet Oficial de Identificación</title>
+  <meta name="description" content="Generador Oficial del Carnet de Team Palomo República Dominicana. Sube tu foto, elige tu categoría paloma y obtén tu carnet oficial con código QR escaneable y doble cara.">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="assets/escudo-rd.svg" type="image/svg+xml">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rdBlue: '#002D62',
+            rdRed: '#CE1126',
+            rdGold: '#D4AF37',
+            rdDark: '#070d19',
+            jcpNavy: '#0f172a'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- External libraries (Self-contained in ./assets for 100% offline & Vercel reliability) -->
+  <script src="assets/qrcode.min.js"></script>
+  <script src="assets/confetti.min.js"></script>
+  <script src="assets/html2canvas.min.js"></script>
+  <script src="assets/lucide.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#070e1b] text-slate-100 antialiased selection:bg-red-600 selection:text-white">
+
+  <!-- Official Top Banner (Colores Patrios RD) -->
+  <div class="h-1.5 w-full flex">
+    <div class="h-full w-1/2 bg-[#002D62]"></div>
+    <div class="h-full w-4 bg-white"></div>
+    <div class="h-full w-1/2 bg-[#CE1126]"></div>
+  </div>
+
+  <!-- QR SCANNER LANDING NOTIFICATION (Visible when someone opens a scanned QR link) -->
+  <div id="qrScanBanner" class="hidden bg-gradient-to-r from-red-600 via-amber-600 to-blue-600 p-3 sm:p-4 text-center shadow-lg relative z-50">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-white">
+      <div class="flex items-center space-x-2 text-left">
+        <span class="text-xl">🇩🇴</span>
+        <div>
+          <p class="text-xs sm:text-sm font-black tracking-wide">
+            ¡ESTÁS VIENDO EL CARNET OFICIAL DE <span id="bannerTitularName" class="underline uppercase">UN MIEMBRO DEL TEAM PALOMO</span>!
+          </p>
+          <p class="text-[11px] text-amber-100">Documento auténtico verificado por la Junta Central Palomil.</p>
+        </div>
+      </div>
+      <button id="bannerCreateYoursBtn" class="px-4 py-2 rounded-xl bg-white text-slate-900 hover:bg-amber-300 font-black text-xs uppercase tracking-wider shadow-md transition transform active:scale-95 flex items-center gap-1.5 whitespace-nowrap">
+        <i data-lucide="sparkles" class="w-4 h-4 text-red-600"></i>
+        <span>¡Crear Mi Carnet Gratis Aquí!</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand & Escudo -->
+      <div class="flex items-center space-x-3.5 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <div class="relative w-12 h-12 flex-shrink-0 p-1 bg-white/5 rounded-full border border-amber-400/40 shadow-inner flex items-center justify-center">
+          <img src="assets/escudo-rd.svg" alt="Escudo RD" class="w-10 h-10 object-contain drop-shadow">
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-cinzel font-black text-xl sm:text-2xl tracking-wider text-white">TEAM PALOMO</span>
+            <span class="px-2 py-0.5 text-[10px] font-extrabold uppercase rounded bg-red-600 text-white tracking-widest shadow-sm">RD 🇩🇴</span>
+          </div>
+          <p class="text-xs text-amber-300/80 font-medium tracking-wide">Junta Central Palomil • Registro Nacional de Enamoraos</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Sound Effect Toggle -->
+        <button id="toggleSoundBtn" class="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white transition flex items-center text-xs gap-1.5" title="Activar/Silenciar Sonidos">
+          <i data-lucide="volume-2" class="w-4 h-4"></i>
+          <span class="hidden sm:inline font-semibold">Sonido</span>
+        </button>
+
+        <!-- QR Scanner / Verifier Modal Trigger -->
+        <button id="openScannerModalBtn" class="px-3.5 py-2 rounded-lg bg-slate-800 border border-blue-500/40 hover:border-blue-400 hover:bg-slate-700/80 text-blue-300 hover:text-white font-medium text-xs sm:text-sm flex items-center gap-2 transition shadow-sm">
+          <i data-lucide="qr-code" class="w-4 h-4 text-blue-400"></i>
+          <span>Verificar Carnet</span>
+        </button>
+
+        <!-- Help / Info Button -->
+        <button id="openHelpBtn" class="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white transition" title="Acerca de">
+          <i data-lucide="info" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Notice Banner -->
+  <div class="bg-gradient-to-r from-blue-950/40 via-slate-900/60 to-red-950/40 border-b border-slate-800/80 py-2 px-4 text-center">
+    <p class="text-xs sm:text-sm text-slate-300 max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+        🇩🇴 TEAM PALOMO RD
+      </span>
+      <span>Carnet oficial con código QR escaneable en el frente y doble cara (Frente y Detrás). Sin DNI, con tu nombre y logo de RD.</span>
+    </p>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+      
+      <!-- ================= LEFT COLUMN: FORM GENERATOR ================= -->
+      <section class="lg:col-span-6 space-y-6">
+        
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-7 shadow-xl backdrop-blur-sm">
+          
+          <!-- Form Header -->
+          <div class="border-b border-slate-800 pb-5 mb-6 flex items-center justify-between">
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+                <i data-lucide="id-card" class="w-6 h-6 text-blue-500"></i>
+                Generador de Carnet
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                Completa tus datos para emitir tu carnet oficial de Team Palomo.
+              </p>
+            </div>
+            
+            <button id="randomizeBtn" type="button" class="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-300 hover:bg-blue-600/30 transition flex items-center gap-1.5" title="Llenar con datos aleatorios divertidos">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-400"></i>
+              <span>Aleatorio</span>
+            </button>
+          </div>
+
+          <form id="cedulaForm" class="space-y-5" onsubmit="return false;">
+            
+            <!-- 1. Nombre / Apodo / Apellido -->
+            <div>
+              <label for="inputName" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center justify-between">
+                <span>Nombre, Apodo o Apellido <span class="text-red-500">*</span></span>
+                <span class="text-[11px] text-slate-500 lowercase font-normal">Máx 32 caracteres</span>
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <i data-lucide="user" class="w-4 h-4"></i>
+                </div>
+                <input 
+                  type="text" 
+                  id="inputName" 
+                  placeholder="Ej: Brayan El Enamorao o Kevin De La Rosa" 
+                  maxlength="34"
+                  value="BRAYAN EL ENAMORAO"
+                  class="w-full bg-slate-950/80 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition font-medium"
+                  required
+                >
+              </div>
+            </div>
+
+            <!-- 2. Foto del Portador (Upload + Webcam) -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center justify-between">
+                <span>Foto Oficial del Portador <span class="text-red-500">*</span></span>
+                <span class="text-[11px] text-amber-400 font-normal">Sube foto o usa cámara</span>
+              </label>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                <!-- File Upload Button -->
+                <label class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-xl bg-slate-950/50 hover:bg-slate-900/60 cursor-pointer transition group">
+                  <i data-lucide="upload" class="w-6 h-6 text-slate-400 group-hover:text-blue-400 transition mb-1.5"></i>
+                  <span class="text-xs font-semibold text-slate-300 group-hover:text-white">Subir Foto</span>
+                  <span class="text-[10px] text-slate-500">PNG, JPG, WEBP</span>
+                  <input type="file" id="photoFileInput" accept="image/*" class="hidden">
+                </label>
+
+                <!-- Webcam Capture Button -->
+                <button type="button" id="openWebcamBtn" class="flex flex-col items-center justify-center p-4 border border-slate-700 hover:border-amber-500 rounded-xl bg-slate-950/50 hover:bg-slate-900/60 transition group">
+                  <i data-lucide="camera" class="w-6 h-6 text-slate-400 group-hover:text-amber-400 transition mb-1.5"></i>
+                  <span class="text-xs font-semibold text-slate-300 group-hover:text-white">Tomar Selfie</span>
+                  <span class="text-[10px] text-slate-500">Usar Cámara Web</span>
+                </button>
+              </div>
+
+              <!-- Webcam preview drawer (Hidden by default) -->
+              <div id="webcamContainer" class="hidden bg-slate-950 border border-slate-800 rounded-xl p-3 text-center mb-3">
+                <video id="webcamVideo" autoplay playsinline class="w-full max-h-52 rounded-lg bg-black object-cover mx-auto"></video>
+                <div class="mt-2.5 flex items-center justify-center gap-2">
+                  <button type="button" id="snapPhotoBtn" class="px-4 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center gap-1.5 shadow">
+                    <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                    <span>¡Capturar Foto!</span>
+                  </button>
+                  <button type="button" id="closeWebcamBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+
+              <!-- Photo Controls (Zoom / Adjust / Filter) -->
+              <div id="photoControls" class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3 space-y-2.5">
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                  <span class="flex items-center gap-1.5">
+                    <i data-lucide="sliders" class="w-3.5 h-3.5 text-blue-400"></i>
+                    Ajuste de Foto
+                  </span>
+                  <button type="button" id="resetPhotoAdjustBtn" class="text-[11px] text-slate-500 hover:text-slate-300">Restablecer</button>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-[10px] text-slate-400 block mb-1">Zoom Foto</label>
+                    <input type="range" id="photoZoom" min="1" max="2.5" step="0.05" value="1" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-slate-400 block mb-1">Posición Vertical</label>
+                    <input type="range" id="photoPosY" min="-50" max="50" step="1" value="0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-1 border-t border-slate-800/60">
+                  <label class="flex items-center space-x-2 text-xs text-slate-300 cursor-pointer">
+                    <input type="checkbox" id="photoGrayscaleCheck" class="rounded bg-slate-800 border-slate-700 text-blue-600 focus:ring-0">
+                    <span>Filtro Blanco y Negro</span>
+                  </label>
+                  <label class="flex items-center space-x-2 text-xs text-slate-300 cursor-pointer">
+                    <input type="checkbox" id="photoBoostCheck" checked class="rounded bg-slate-800 border-slate-700 text-blue-600 focus:ring-0">
+                    <span>Efecto Carnet Nítido</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Categoría de Team Palomo -->
+            <div>
+              <label for="inputCategory" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center justify-between">
+                <span>Categoría Team Palomo <span class="text-red-500">*</span></span>
+                <span class="text-[11px] text-amber-400 font-semibold" id="categoryBadge">Nivel Dios</span>
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
+                </div>
+                <select 
+                  id="inputCategory" 
+                  class="w-full bg-slate-950/80 border border-slate-700 rounded-xl pl-10 pr-8 py-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition cursor-pointer font-medium"
+                >
+                  <option value="PALOMO ENAMORAO" selected>Palomo Enamorao (Le responde en 0.2 seg)</option>
+                  <option value="PALOMO DE ORO">Palomo de Oro (Ha financiado uñas, pelo y Uber)</option>
+                  <option value="PALOMO FIEL">Palomo Fiel (Espera que ella rompa con el novio)</option>
+                  <option value="PALOMO VIP">Palomo VIP (Lo dejan en visto y dice 'buenas noches amor')</option>
+                  <option value="PALOMO CHOFER">Palomo Chofer (Le da pon a ella y al que le gusta)</option>
+                  <option value="PALOMO FINANCIERO">Palomo Financiero (Transfiere pal salón sin ser nada)</option>
+                  <option value="PALOMO POETA">Palomo Poeta (Párrafos bíblicos a las 3:00 AM)</option>
+                  <option value="PALOMO MANDAO">Palomo Mandao (El que le va a buscar la merienda)</option>
+                  <option value="PALOMO CUERNÚ HONORÍFICO">Palomo Cuernú Honorífico (Confía ciegamente)</option>
+                  <option value="PALOMO EN REHABILITACIÓN">Palomo en Rehabilitación (Dijo que no y ya la llamó)</option>
+                  <option value="CUSTOM">-- OTRA CATEGORÍA PERSONALIZADA --</option>
+                </select>
+              </div>
+
+              <!-- Custom Category Input (Hidden until selected) -->
+              <div id="customCategoryContainer" class="hidden mt-2">
+                <input 
+                  type="text" 
+                  id="inputCustomCategory" 
+                  placeholder="Escribe tu categoría paloma personalizada..." 
+                  maxlength="30"
+                  class="w-full bg-slate-950 border border-amber-500/50 rounded-xl px-4 py-2.5 text-xs text-amber-200 placeholder-slate-500 focus:outline-none"
+                >
+              </div>
+
+              <p id="categoryDescription" class="text-xs text-slate-400 mt-1.5 italic bg-slate-950/40 px-3 py-1.5 rounded-lg border border-slate-800">
+                "Le compra flores a la que no le contesta y le reacciona a todas las historias con fueguitos."
+              </p>
+            </div>
+
+            <!-- 4. Nivel de Palomería Slider -->
+            <div>
+              <div class="flex items-center justify-between text-xs mb-1.5">
+                <span class="font-bold uppercase tracking-wider text-slate-300">Nivel de Palomería Certificado:</span>
+                <span id="palomoLevelLabel" class="font-mono font-black text-sm text-red-400">99.8% (Crónico)</span>
+              </div>
+              <input 
+                type="range" 
+                id="inputLevel" 
+                min="50" 
+                max="100" 
+                step="0.5" 
+                value="99.8"
+                class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-600"
+              >
+              <div class="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                <span>50% Principiante</span>
+                <span>75% Fiel</span>
+                <span>90% Ilusionao</span>
+                <span>100% Incurable</span>
+              </div>
+            </div>
+
+            <!-- 5. Datos Adicionales del Carnet (Collapsible) -->
+            <div class="border border-slate-800 rounded-xl overflow-hidden bg-slate-950/30">
+              <button 
+                type="button" 
+                id="toggleExtraFieldsBtn" 
+                class="w-full px-4 py-3 text-left text-xs font-bold text-slate-300 hover:text-white flex items-center justify-between bg-slate-950/60"
+              >
+                <span class="flex items-center gap-2">
+                  <i data-lucide="settings-2" class="w-4 h-4 text-blue-400"></i>
+                  Datos del Reverso del Carnet
+                </span>
+                <i data-lucide="chevron-down" id="extraFieldsChevron" class="w-4 h-4 transition-transform duration-200"></i>
+              </button>
+
+              <div id="extraFieldsContent" class="p-4 space-y-4 border-t border-slate-800/80">
+                
+                <div class="grid grid-cols-2 gap-3">
+                  <!-- Fecha de Nacimiento -->
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Fecha Nac.</label>
+                    <input type="text" id="inputBirthDate" value="14 FEB 1999" maxlength="15" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+                  </div>
+                  <!-- Sexo -->
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Sexo</label>
+                    <select id="inputSex" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+                      <option value="M" selected>M (Masculino)</option>
+                      <option value="F">F (Femenino)</option>
+                      <option value="X">X (No Definido)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <!-- Lugar de Nacimiento -->
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Lugar de Nac.</label>
+                    <input type="text" id="inputBirthPlace" value="SANTO DOMINGO, D.N." maxlength="25" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+                  </div>
+                  <!-- Estado Civil -->
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Estado Civil</label>
+                    <select id="inputCivilStatus" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+                      <option value="SOLTERO E ILUSIONAO" selected>Soltero e Ilusionao</option>
+                      <option value="EN EL VISTO">En el visto a las 3 AM</option>
+                      <option value="FRIENDZONE VITALICIA">Friendzone Vitalicia</option>
+                      <option value="ESPERANDO EL TURNO">Esperando el Turno</option>
+                      <option value="RELACIÓN IMAGINARIA">Relación Imaginaria</option>
+                      <option value="PAGANDO CAPRICHOS">Pagando Caprichos</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Ocupación -->
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Ocupación / Oficio</label>
+                  <input type="text" id="inputOccupation" value="FINANCIERO DE UÑAS Y SALÓN" maxlength="30" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+                </div>
+
+                <!-- Colegio Electoral / Mesa -->
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Mesa Palomil / Rincón</label>
+                  <input type="text" id="inputPollingPlace" value="COL. 0069 - RINCÓN DE LOS ILUSIONADOS" maxlength="36" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 6. Firma Digital del Titular -->
+            <div>
+              <div class="flex items-center justify-between text-xs mb-1.5">
+                <span class="font-bold uppercase tracking-wider text-slate-300">Firma del Portador:</span>
+                <div class="space-x-2">
+                  <button type="button" id="autoSignBtn" class="text-[11px] text-blue-400 hover:text-blue-300 underline font-medium">Generar Firma</button>
+                  <button type="button" id="clearSignBtn" class="text-[11px] text-slate-500 hover:text-slate-300">Limpiar</button>
+                </div>
+              </div>
+              <div class="relative bg-white rounded-xl border border-slate-300 overflow-hidden h-20 shadow-inner">
+                <canvas id="signatureCanvas" width="400" height="90" class="w-full h-full cursor-crosshair touch-none"></canvas>
+                <span class="absolute bottom-1 right-2 text-[9px] text-slate-400 pointer-events-none select-none">Firma aquí con mouse o dedo</span>
+              </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button 
+              type="button" 
+              id="generateCedulaBtn" 
+              class="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-blue-700 via-blue-600 to-red-600 hover:from-blue-600 hover:to-red-500 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-blue-900/30 hover:shadow-blue-900/50 transition transform active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+              <span>¡Emitir Carnet Team Palomo!</span>
+            </button>
+
+          </form>
+        </div>
+
+      </section>
+
+      <!-- ================= RIGHT COLUMN: LIVE 3D CARD PREVIEW & DOWNLOADS ================= -->
+      <section class="lg:col-span-6 space-y-6 lg:sticky lg:top-24">
+        
+        <!-- Preview Box Header -->
+        <div class="flex items-center justify-between bg-slate-900/90 border border-slate-800 rounded-2xl px-5 py-4 shadow-lg backdrop-blur-sm">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+            <span class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Carnet Oficial Team Palomo</span>
+          </div>
+
+          <!-- Flip Card Toggle -->
+          <div class="flex items-center space-x-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
+            <button id="viewFrontBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-blue-600 text-white shadow-sm flex items-center gap-1.5">
+              <span>Frente</span>
+            </button>
+            <button id="viewBackBtn" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white flex items-center gap-1.5">
+              <span>Detrás</span>
+            </button>
+            <button id="flipCardBtn" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 transition" title="Girar 3D">
+              <i data-lucide="rotate-3d" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3D Card Viewport -->
+        <div class="flex justify-center">
+          <div class="id-card-viewport">
+            <div id="idCardFlipper" class="id-card-flipper">
+              
+              <!-- ============================================== -->
+              <!-- ============ FRONT OF CARD (FRENTE) ========== -->
+              <!-- ============================================== -->
+              <div id="cardFaceFront" class="id-card-face id-card-front flex flex-col justify-between p-4 sm:p-5 relative select-none">
+                
+                <!-- Guilloche & Security Pattern Background -->
+                <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+                  <img src="assets/guilloche.svg" alt="Guilloché Pattern" class="w-full h-full object-cover opacity-95">
+                </div>
+
+                <!-- Plastic Lamination Reflective Sheen -->
+                <div class="plastic-sheen"></div>
+                <div class="holo-overlay"></div>
+
+                <!-- Top Header: TEAM PALOMO with RD Coat of Arms & Flag -->
+                <div class="relative z-20 border-b border-blue-900/30 pb-1.5">
+                  <div class="flex items-center justify-between">
+                    
+                    <!-- Dominican Flag Badge -->
+                    <div class="w-10 h-7 rounded border border-black/20 shadow-sm overflow-hidden flex-shrink-0">
+                      <img src="assets/bandera-rd.svg" alt="Bandera RD" class="w-full h-full object-cover">
+                    </div>
+
+                    <!-- Center Title: TEAM PALOMO (Updated per request) -->
+                    <div class="text-center flex-1 px-2">
+                      <h3 class="font-cinzel font-black text-lg sm:text-xl text-[#002D62] tracking-wider uppercase leading-none drop-shadow-sm">
+                        TEAM PALOMO
+                      </h3>
+                      <h4 class="font-cinzel font-bold text-[9px] sm:text-[10px] text-[#CE1126] tracking-widest uppercase mt-0.5 leading-none">
+                        REPÚBLICA DOMINICANA • JUNTA CENTRAL PALOMIL
+                      </h4>
+                      <p class="text-[8px] font-bold text-slate-600 tracking-wider uppercase mt-0.5">
+                        CARNET OFICIAL DE IDENTIFICACIÓN
+                      </p>
+                    </div>
+
+                    <!-- Official RD Coat of Arms -->
+                    <div class="w-9 h-9 flex-shrink-0">
+                      <img src="assets/escudo-rd.svg" alt="Escudo RD" class="w-full h-full object-contain drop-shadow-sm">
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Prominent Upper Bar: NAME OF THE PERSON (Replacing DNI number per user request) -->
+                <div class="relative z-20 flex items-center justify-between px-1 py-1 mt-0.5 bg-gradient-to-r from-blue-900/5 via-slate-100 to-red-900/5 rounded border-b border-slate-200">
+                  <div class="flex items-baseline space-x-1.5 min-w-0 flex-1">
+                    <span class="text-[8.5px] font-extrabold uppercase text-slate-500">TITULAR:</span>
+                    <span id="cardHeaderName" class="font-cinzel font-black text-xs sm:text-sm text-red-700 tracking-wide uppercase truncate drop-shadow-sm">
+                      BRAYAN EL ENAMORAO
+                    </span>
+                  </div>
+                  <div class="flex items-center space-x-1 flex-shrink-0 pl-2">
+                    <span class="text-[7.5px] font-bold uppercase text-slate-500">VIGENCIA:</span>
+                    <span class="text-[8.5px] font-black text-blue-900 uppercase">VITALICIO</span>
+                  </div>
+                </div>
+
+                <!-- Main Middle Body (Photo + Fields + QR CODE WHERE GHOST PHOTO WAS) -->
+                <div class="relative z-20 flex gap-3 sm:gap-4 items-center flex-1 my-1">
+                  
+                  <!-- Left: User Photo Frame -->
+                  <div class="w-24 sm:w-28 h-32 sm:h-36 flex-shrink-0 cedula-photo-frame rounded-md relative shadow-md">
+                    <img id="cardUserPhoto" src="" alt="Foto Titular" class="w-full h-full object-cover">
+                    <!-- Photo Security Stamp overlay -->
+                    <div class="absolute bottom-0 inset-x-0 bg-[#002D62]/90 py-0.5 text-center">
+                      <span class="text-[7.5px] font-black tracking-widest text-amber-300 uppercase">REGISTRADO</span>
+                    </div>
+                  </div>
+
+                  <!-- Center: Identification Fields -->
+                  <div class="flex-1 space-y-1 sm:space-y-1.5 min-w-0 pr-1">
+                    
+                    <!-- Titular Name Secondary -->
+                    <div>
+                      <span class="text-[7.5px] font-extrabold uppercase text-slate-500 block leading-none">NOMBRES Y APELLIDOS / APODO</span>
+                      <span id="cardName" class="font-black text-xs sm:text-sm text-slate-900 tracking-wide uppercase truncate block leading-tight">
+                        BRAYAN EL ENAMORAO
+                      </span>
+                    </div>
+
+                    <!-- Category Badge -->
+                    <div>
+                      <span class="text-[7.5px] font-extrabold uppercase text-slate-500 block leading-none">CATEGORÍA TEAM PALOMO</span>
+                      <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-900/10 border border-blue-900/20 mt-0.5 max-w-full truncate">
+                        <span id="cardCategory" class="font-black text-[10px] sm:text-xs text-blue-900 tracking-wide uppercase truncate">
+                          PALOMO ENAMORAO
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Level Badge & Nationality -->
+                    <div class="flex items-center gap-2">
+                      <div>
+                        <span class="text-[7.5px] font-extrabold uppercase text-slate-500 block leading-none">NIVEL PALOMO</span>
+                        <span id="cardLevel" class="font-mono-ocr font-black text-[10.5px] text-red-600 leading-tight">
+                          99.8% (CRÓNICO)
+                        </span>
+                      </div>
+                      <div class="pl-2 border-l border-slate-300">
+                        <span class="text-[7.5px] font-extrabold uppercase text-slate-500 block leading-none">SEXO</span>
+                        <span id="cardSex" class="font-black text-[10.5px] text-slate-800 leading-tight">M</span>
+                      </div>
+                      <div class="pl-2 border-l border-slate-300">
+                        <span class="text-[7.5px] font-extrabold uppercase text-slate-500 block leading-none">ORIGEN</span>
+                        <span class="font-black text-[9.5px] text-slate-800 leading-tight">RD 🇩🇴</span>
+                      </div>
+                    </div>
+
+                    <!-- Date of Birth & Signature -->
+                    <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-200">
+                      <div>
+                        <span class="text-[7px] font-extrabold uppercase text-slate-500 block leading-none">FECHA DE NAC.</span>
+                        <span id="cardBirthDate" class="font-bold text-[9.5px] text-slate-800 block">14 FEB 1999</span>
+                      </div>
+                      <div class="text-right">
+                        <span class="text-[7px] font-extrabold uppercase text-slate-500 block leading-none">FIRMA PORTADOR</span>
+                        <div class="h-5 flex items-center justify-end">
+                          <img id="cardSignatureImg" src="" alt="Firma" class="max-h-full max-w-[90px] object-contain">
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- ======================================================== -->
+                  <!-- RIGHT: QR CODE (EXACTLY WHERE THE SECOND PHOTO WAS) ===== -->
+                  <!-- ======================================================== -->
+                  <div class="flex-shrink-0 flex flex-col items-center justify-center p-1.5 bg-white/95 rounded-xl border-2 border-slate-300 shadow-md">
+                    <div id="cardFrontQrContainer" class="w-16 sm:w-20 h-16 sm:h-20 flex items-center justify-center"></div>
+                    <span class="text-[6.5px] font-black text-[#002D62] uppercase mt-1 tracking-wider leading-none">
+                      ESCANEAR
+                    </span>
+                    <span class="text-[5.5px] font-bold text-slate-500 uppercase leading-none mt-0.5">
+                      VER CARNET
+                    </span>
+                  </div>
+
+                </div>
+
+                <!-- Bottom Microtext Line & Hologram Stamp -->
+                <div class="relative z-20 pt-1 border-t border-blue-900/20 flex items-center justify-between">
+                  <div class="microtext-line w-3/4">
+                    TEAM PALOMO • REGISTRO NACIONAL DE PALOMOS • REPÚBLICA DOMINICANA • TEAM PALOMO •
+                  </div>
+                  <div class="text-[7px] font-mono font-bold text-slate-500">
+                    PADRÓN OFICIAL RD
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- ============================================== -->
+              <!-- ============ BACK OF CARD (DETRÁS) ========== -->
+              <!-- ============================================== -->
+              <div id="cardFaceBack" class="id-card-face id-card-back flex flex-col justify-between p-4 sm:p-5 relative select-none">
+                
+                <!-- Background Pattern -->
+                <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+                  <img src="assets/guilloche.svg" alt="Guilloché Pattern" class="w-full h-full object-cover opacity-90 rotate-180">
+                </div>
+
+                <div class="plastic-sheen"></div>
+                <div class="holo-overlay"></div>
+
+                <!-- Top Magnetic Stripe Simulation -->
+                <div class="relative z-20 -mx-4 sm:-mx-5 -mt-4 sm:-mt-5 mb-2 bg-[#0f172a] h-8 sm:h-9 flex items-center justify-between px-4 border-b border-black/40">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-6 h-5">
+                      <img src="assets/chip.svg" alt="Chip" class="w-full h-full object-contain">
+                    </div>
+                    <span class="text-[8px] font-mono text-slate-400 uppercase tracking-widest">
+                      TEAM PALOMO ELECTRONIC SMART CARD • RD
+                    </span>
+                  </div>
+                  <span class="text-[8px] font-mono text-amber-400 font-bold">
+                    RD-PALOMO-2026
+                  </span>
+                </div>
+
+                <!-- Middle Content: Details, Fingerprint, RD Escudo & Disclaimer -->
+                <div class="relative z-20 space-y-2 flex-1 my-1">
+                  
+                  <div class="grid grid-cols-2 gap-3 text-[8.5px]">
+                    <div>
+                      <span class="font-extrabold text-slate-500 uppercase block leading-none">LUGAR DE NACIMIENTO:</span>
+                      <span id="cardBackBirthPlace" class="font-bold text-slate-900 block truncate">SANTO DOMINGO, D.N.</span>
+                    </div>
+                    <div>
+                      <span class="font-extrabold text-slate-500 uppercase block leading-none">ESTADO CIVIL:</span>
+                      <span id="cardBackCivilStatus" class="font-bold text-red-700 block truncate">SOLTERO E ILUSIONAO</span>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3 text-[8.5px]">
+                    <div>
+                      <span class="font-extrabold text-slate-500 uppercase block leading-none">OCUPACIÓN / OFICIO:</span>
+                      <span id="cardBackOccupation" class="font-bold text-slate-900 block truncate">FINANCIERO DE UÑAS Y SALÓN</span>
+                    </div>
+                    <div>
+                      <span class="font-extrabold text-slate-500 uppercase block leading-none">MESA PALOMIL:</span>
+                      <span id="cardBackPollingPlace" class="font-bold text-blue-900 block truncate">COL. 0069 - RINCÓN DE LOS ILUSIONADOS</span>
+                    </div>
+                  </div>
+
+                  <!-- Fingerprint, Disclaimer & RD Escudo Row -->
+                  <div class="flex items-center justify-between pt-2 border-t border-slate-300/80 gap-3">
+                    <div class="w-9 h-11 opacity-70 flex-shrink-0">
+                      <img src="assets/huella.svg" alt="Huella" class="w-full h-full object-contain">
+                    </div>
+                    <!-- Parody Disclaimer -->
+                    <div class="text-[7px] text-slate-600 leading-snug flex-1">
+                      Certificado oficial emitido por <strong>Team Palomo</strong> bajo el artículo 69 de la Ley del Enamorao en la República Dominicana. Válido en discotecas, cabañas, colmados y redes sociales para justificar vistos eternos y transferencias de salón.
+                    </div>
+                    <div class="w-10 h-10 flex-shrink-0 opacity-85">
+                      <img src="assets/escudo-rd.svg" alt="Escudo RD" class="w-full h-full object-contain">
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Machine Readable Zone (MRZ) - 3 lines standard -->
+                <div class="relative z-20 mt-1 mrz-zone border border-slate-300/80 shadow-inner">
+                  <div id="mrzLine1" class="truncate font-mono-ocr">I&lt;DOM&lt;TEAM&lt;PALOMO&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div>
+                  <div id="mrzLine2" class="truncate font-mono-ocr">9902144M3010068DOM&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;7</div>
+                  <div id="mrzLine3" class="truncate font-mono-ocr">BRAYAN&lt;&lt;EL&lt;ENAMORAO&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Download & Sharing Action Center -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl backdrop-blur-sm space-y-3.5">
+          
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="download-cloud" class="w-4 h-4 text-emerald-400"></i>
+              Descargar Carnet en Alta Definición (HD)
+            </span>
+            <span class="text-[10px] text-emerald-400 font-mono">Calidad 300 DPI</span>
+          </h4>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <!-- Download Front -->
+            <button 
+              type="button" 
+              id="downloadFrontBtn" 
+              class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition"
+            >
+              <i data-lucide="image" class="w-4 h-4 text-blue-400"></i>
+              <span>Descargar Frente (HD)</span>
+            </button>
+
+            <!-- Download Back -->
+            <button 
+              type="button" 
+              id="downloadBackBtn" 
+              class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition"
+            >
+              <i data-lucide="image" class="w-4 h-4 text-amber-400"></i>
+              <span>Descargar Detrás (HD)</span>
+            </button>
+          </div>
+
+          <!-- Download Both (Combined Front + Back in 1 image) -->
+          <button 
+            type="button" 
+            id="downloadBothBtn" 
+            class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition"
+          >
+            <i data-lucide="layers" class="w-4 h-4"></i>
+            <span>Descargar Carnet Completo (Frente + Detrás)</span>
+          </button>
+
+          <!-- WhatsApp & Social Share -->
+          <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-slate-800/80">
+            <button 
+              type="button" 
+              id="shareWhatsAppBtn" 
+              class="py-2.5 px-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold text-xs flex items-center justify-center gap-2 transition"
+            >
+              <i data-lucide="message-circle" class="w-4 h-4 text-emerald-400"></i>
+              <span>Compartir por WhatsApp</span>
+            </button>
+
+            <button 
+              type="button" 
+              id="testQrScanBtn" 
+              class="py-2.5 px-3 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold text-xs flex items-center justify-center gap-2 transition"
+            >
+              <i data-lucide="scan-line" class="w-4 h-4 text-blue-400"></i>
+              <span>Probar Escaneo QR</span>
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- ============ QR VERIFICATION MODAL ("EL ESCÁNER") ============ -->
+  <!-- ============================================================== -->
+  <div id="verifyModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-blue-900 via-slate-900 to-red-900 p-5 text-center relative border-b border-slate-800">
+        <button id="closeVerifyModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <div class="w-14 h-14 mx-auto mb-2 p-1 bg-white/10 rounded-full flex items-center justify-center">
+          <img src="assets/escudo-rd.svg" alt="Escudo RD" class="w-12 h-12 object-contain">
+        </div>
+        <h3 class="font-cinzel font-black text-xl text-white">TEAM PALOMO RD</h3>
+        <p class="text-xs text-amber-300 font-bold tracking-widest uppercase">Sistema Oficial de Verificación de Carnet</p>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-5">
+        
+        <!-- Status Verified Badge -->
+        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center flex-shrink-0 font-black">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-black text-emerald-400">CARNET OFICIALMENTE VERIFICADO</h4>
+            <p class="text-[11px] text-slate-300">Registrado en el Padrón Nacional del Team Palomo de la República Dominicana.</p>
+          </div>
+        </div>
+
+        <!-- Verified User Details Card -->
+        <div class="bg-slate-950/80 rounded-xl p-4 border border-slate-800 space-y-2.5 text-xs">
+          <div class="flex justify-between border-b border-slate-800 pb-2">
+            <span class="text-slate-400 font-bold uppercase">Titular:</span>
+            <span id="modalVerifiedName" class="font-black text-white uppercase text-right">BRAYAN EL ENAMORAO</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-800 pb-2">
+            <span class="text-slate-400 font-bold uppercase">Categoría:</span>
+            <span id="modalVerifiedCategory" class="font-black text-blue-400 uppercase text-right">PALOMO ENAMORAO</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-800 pb-2">
+            <span class="text-slate-400 font-bold uppercase">Nivel de Palomería:</span>
+            <span id="modalVerifiedLevel" class="font-black text-red-400">99.8% (Crónico)</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400 font-bold uppercase">Vigencia:</span>
+            <span class="font-bold text-emerald-400 uppercase">VITALICIO (UNA VEZ PALOMO, PALOMO X SIEMPRE)</span>
+          </div>
+        </div>
+
+        <!-- THE REQUIRED CALL TO ACTION: ¿DÓNDE CONSEGUIR EL TUYO? -->
+        <div class="bg-gradient-to-br from-amber-500/10 via-red-500/10 to-blue-500/10 border-2 border-amber-500/40 rounded-xl p-4 text-center space-y-2.5 shadow-lg">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-wider">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            ¿DÓNDE PUEDES CONSEGUIR EL TUYO?
+          </div>
+          <p class="text-xs text-slate-200">
+            ¿Quieres tener tu propio carnet oficial del <strong>Team Palomo RD</strong> con tu foto, tu categoría y tu propio código QR escaneable?
+          </p>
+          <button 
+            type="button" 
+            id="modalCreateYoursBtn" 
+            class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-red-600 via-amber-500 to-blue-600 hover:from-red-500 hover:to-blue-500 text-white font-black text-sm uppercase tracking-wider shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2"
+          >
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>¡Crear Mi Propio Carnet de Team Palomo Gratis!</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-slate-950 px-6 py-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-500">
+        <span>Team Palomo RD • Junta Central Palomil</span>
+        <button id="modalCloseSecondaryBtn" class="text-slate-400 hover:text-white underline">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- ============ INFO / ABOUT MODAL ============================== -->
+  <!-- ============================================================== -->
+  <div id="helpModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-black text-white flex items-center gap-2">
+          <i data-lucide="info" class="w-5 h-5 text-blue-400"></i>
+          Acerca de Team Palomo RD
+        </h3>
+        <button id="closeHelpModalBtn" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        <strong>Team Palomo RD</strong> es una aplicación satírica con calidad visual fidedigna, escaneable con celular y con doble cara (Frente y Detrás). 
+      </p>
+      <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-400 space-y-1.5">
+        <p>✅ <strong>Código QR en el Frente:</strong> Ubicado donde estaba la segunda foto, 100% escaneable desde cualquier celular.</p>
+        <p>✅ <strong>Sin Códigos de DNI:</strong> Muestra prominentemente el nombre del portador.</p>
+        <p>✅ <strong>Encabezado TEAM PALOMO:</strong> Con el Escudo Nacional de la República Dominicana y Bandera Dominicana.</p>
+        <p>✅ <strong>Listo para Vercel:</strong> Despliégalo en 1 clic conectando tu repositorio de GitHub.</p>
+      </div>
+      <button id="helpOkBtn" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs">
+        ¡Entendido!
+      </button>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

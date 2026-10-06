@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 95" width="100%" height="100%">
+  <defs>
+    <linearGradient id="goldChip" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCEBA6"/>
+      <stop offset="50%" stop-color="#E2B13C"/>
+      <stop offset="100%" stop-color="#9C731A"/>
+    </linearGradient>
+  </defs>
+  <rect width="120" height="95" rx="12" fill="url(#goldChip)" stroke="#78550D" stroke-width="2"/>
+  <!-- Internal circuit contact traces -->
+  <path d="M 0 35 L 40 35 L 50 47.5 L 40 60 L 0 60" fill="none" stroke="#78550D" stroke-width="2"/>
+  <path d="M 120 35 L 80 35 L 70 47.5 L 80 60 L 120 60" fill="none" stroke="#78550D" stroke-width="2"/>
+  <path d="M 50 0 L 50 35 M 70 0 L 70 35" fill="none" stroke="#78550D" stroke-width="2"/>
+  <path d="M 50 95 L 50 60 M 70 95 L 70 60" fill="none" stroke="#78550D" stroke-width="2"/>
+  <rect x="50" y="35" width="20" height="25" rx="3" fill="#D49E2E" stroke="#78550D" stroke-width="1.5"/>
+</svg>
